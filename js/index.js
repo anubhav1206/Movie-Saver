@@ -4,6 +4,8 @@ const movieResults = document.querySelector('.results')
 const moreResults = document.getElementById('more-results')
 let currentSearch = ''
 let pageNumber = 1
+let darkMode = false
+let plotElement = null
 
 //Step 1 /* Setup local storage to save movies if there isn't a key pair setup yet */
 if(!localStorage.getItem('Watchlist')) {
@@ -13,12 +15,17 @@ const toggle = document.getElementById('toggleDark');
 const body = document.querySelector('body');
 
 toggle.addEventListener('click', function(){
+    darkMode = !darkMode
     this.classList.toggle('bi-moon');
+    //change color of "Read More" and "Read Less" buttons when change the mode
+    plotElement.forEach((plot) => {
+        if (darkMode) plot.style.color = "#deafd3";
+        else plot.style.color = "black";
+    });
     if(this.classList.toggle('bi-brightness-high-fill')){
-        body.style.background = '#FFF4F4';
         body.style.color = '#374259';
+        body.style.background = '#FFF4F4';
         body.style.transition = '2s';
-        
 
     }else{
         body.style.background = '#374259';
@@ -28,6 +35,27 @@ toggle.addEventListener('click', function(){
     }
 });
 
+// This function change the color of "Read More" and "Read Less" buttons when hovering and when not.
+function handleTextColor(e) {
+    if (e.type === 'mouseover') {
+        e.target.style.color = "#3f7c57"; // Change the color to your desired value when hovering
+    } else if (e.type === 'mouseout') {
+        if (darkMode)e.target.style.color = "#deafd3"; // Reset the color to its default value when not hovering
+        else e.target.style.color = "black";
+    }
+}
+
+// This function show more detail when click on "Read More" and show less when click on "Read Less"
+function handleMouseEvent(e) {
+    let clicked = e.target.previousElementSibling;
+    if (clicked.classList.contains('expand-text')) {
+        clicked.classList.toggle('expand-text');
+        e.target.innerText = "Read Less";
+    } else if (!clicked.classList.contains('expand-text')) {
+        clicked.classList.toggle('expand-text');
+        e.target.innerText = "Read More";
+    }
+}
 
 function omdbSearch(searchText, pageNumber) { //Step 3 - Use the API to perform a general search
     fetch(`https://www.omdbapi.com/?apikey=90353081&s=${searchText}&page=${pageNumber}`)
@@ -95,20 +123,14 @@ function omdbTitleSearch(searchData) { //Step 4 - Do another search but with tit
                     </div>
                 </section>
             `;
+            plotElement = document.querySelectorAll('.read-more');
             /* Expand or constrain plot text */
-            const expandText = document.querySelectorAll('.read-more')
-            expandText.forEach( (plot) => {
-                plot.addEventListener('click', (e) => {
-                    let clicked = e.target.previousElementSibling;
-                    if(clicked.classList.contains('expand-text')) {
-                        clicked.classList.toggle('expand-text')
-                        e.target.innerText = "Read Less"
-                    }else if(!clicked.classList.contains('expand-text')) {
-                        clicked.classList.toggle('expand-text')
-                        e.target.innerText = "Read More"
-                    }
-                })
-            })
+            plotElement.forEach((plot) => {
+                plot.addEventListener('mouseover', handleTextColor);
+                plot.addEventListener('mouseout', handleTextColor);
+                plot.addEventListener('click', handleMouseEvent);
+                if (darkMode) plot.style.color = "#deafd3"; // set the default color for dark mode
+            });
         }
 
         /* Add or Remove Movies to Watchlist(localStorage) directly from Search results */
@@ -119,7 +141,7 @@ function omdbTitleSearch(searchData) { //Step 4 - Do another search but with tit
             let verifyMovie = storedMovies.indexOf(wlBtn.dataset.title); //Is the movie from the search results part of localstorage
             if(verifyMovie > -1) { // If the movie is already in localstorage change the button bkg + to a -
                 wlBtn.classList.remove('add-btn-light');
-                wlBtn.classList.add('remove-btn-light');    
+                wlBtn.classList.add('remove-btn-light');
             }
 
             wlBtn.addEventListener('click', (e) => { //Listen to all Watchlist buttons
