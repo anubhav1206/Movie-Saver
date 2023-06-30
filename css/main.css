@@ -231,6 +231,7 @@ i {
 
 .read-more {
     border: none;
+    color:inherit;
     background-color: transparent;
 }
 
