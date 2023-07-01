@@ -18,10 +18,12 @@ toggle.addEventListener('click', function(){
     darkMode = !darkMode
     this.classList.toggle('bi-moon');
     //change color of "Read More" and "Read Less" buttons when change the mode
-    plotElement.forEach((plot) => {
-        if (darkMode) plot.style.color = "#deafd3";
-        else plot.style.color = "black";
-    });
+    //it is important that check the plotElement before use it
+    if (plotElement != null)
+        plotElement.forEach((plot) => {
+            if (darkMode) plot.style.color = "#deafd3";
+            else plot.style.color = "black";
+        });
     if(this.classList.toggle('bi-brightness-high-fill')){
         body.style.color = '#374259';
         body.style.background = '#FFF4F4';
@@ -55,6 +57,17 @@ function handleMouseEvent(e) {
         clicked.classList.toggle('expand-text');
         e.target.innerText = "Read More";
     }
+}
+
+function setPlotElements() {
+    plotElement = document.querySelectorAll('.read-more');
+    /* Expand or constrain plot text */
+    plotElement.forEach((plot) => {
+        plot.addEventListener('mouseover', handleTextColor);
+        plot.addEventListener('mouseout', handleTextColor);
+        plot.addEventListener('click', handleMouseEvent);
+        if (darkMode) plot.style.color = "#deafd3"; // set the default color for dark mode
+    });
 }
 
 function omdbSearch(searchText, pageNumber) { //Step 3 - Use the API to perform a general search
@@ -123,14 +136,7 @@ function omdbTitleSearch(searchData) { //Step 4 - Do another search but with tit
                     </div>
                 </section>
             `;
-            plotElement = document.querySelectorAll('.read-more');
-            /* Expand or constrain plot text */
-            plotElement.forEach((plot) => {
-                plot.addEventListener('mouseover', handleTextColor);
-                plot.addEventListener('mouseout', handleTextColor);
-                plot.addEventListener('click', handleMouseEvent);
-                if (darkMode) plot.style.color = "#deafd3"; // set the default color for dark mode
-            });
+            setPlotElements()
         }
 
         /* Add or Remove Movies to Watchlist(localStorage) directly from Search results */
