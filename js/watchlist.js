@@ -6,10 +6,12 @@ let plotElement = null
 toggle.addEventListener('click', function(){
     darkMode = !darkMode
     this.classList.toggle('bi-moon');
-    plotElement.forEach((plot) => {
-        if (darkMode) plot.style.color = "#deafd3";
-        else plot.style.color = "black";
-    });
+
+    if (plotElement != null)
+        plotElement.forEach((plot) => {
+            if (darkMode) plot.style.color = "#deafd3";
+            else plot.style.color = "black";
+        });
     if(this.classList.toggle('bi-brightness-high-fill')){
         body.style.color = '#59374a';
         body.style.background = '#FFF4F4';
@@ -22,25 +24,6 @@ toggle.addEventListener('click', function(){
 
     }
 });
-
-function handleTextColor(e) {
-    if (e.type === 'mouseover') {
-        e.target.style.color = "#3f7c57"; // Change the color to your desired value when hovering
-    } else if (e.type === 'mouseout') {
-        if (darkMode)e.target.style.color = "#deafd3"; // Reset the color to its default value when not hovering
-        else e.target.style.color = "black";
-    }
-}
-function handleMouseEvent(e) {
-    let clicked = e.target.previousElementSibling;
-    if (clicked.classList.contains('expand-text')) {
-        clicked.classList.toggle('expand-text');
-        e.target.innerText = "Read Less";
-    } else if (!clicked.classList.contains('expand-text')) {
-        clicked.classList.toggle('expand-text');
-        e.target.innerText = "Read More";
-    }
-}
 
 const movieResults = document.querySelector('.results')
 if(!localStorage.getItem('Watchlist')){
@@ -91,14 +74,7 @@ function omdbTitleSearch(searchData){
                 </div>
             </section>                    
             `;
-            plotElement = document.querySelectorAll('.read-more');
-            /* Expand or constrain plot text */
-            plotElement.forEach((plot) => {
-                plot.addEventListener('mouseover', handleTextColor);
-                plot.addEventListener('mouseout', handleTextColor);
-                plot.addEventListener('click', handleMouseEvent);
-                if (darkMode) plot.style.color = "#deafd3";
-            });
+            setPlotElements()
         }
     }
     // Feature to add or remove movies from watchlist directly from search results
