@@ -1,25 +1,23 @@
 const toggle = document.getElementById('toggleDark');
 const body = document.querySelector('body');
 let darkMode = false
-let plotElement = null
+let plotElement = document.querySelectorAll('.read-more');
 
-toggle.addEventListener('click', function(){
-    darkMode = !darkMode
+toggle.addEventListener('click', function () {
+    darkMode = !darkMode;
     this.classList.toggle('bi-moon');
     plotElement.forEach((plot) => {
         if (darkMode) plot.style.color = "#deafd3";
         else plot.style.color = "black";
     });
-    if(this.classList.toggle('bi-brightness-high-fill')){
+    if (this.classList.toggle('bi-brightness-high-fill')) {
         body.style.color = '#59374a';
         body.style.background = '#FFF4F4';
         body.style.transition = '2s';
-
-    }else{
+    } else {
         body.style.background = '#374259';
         body.style.color = '#FFF4F4';
         body.style.transition = '2s';
-
     }
 });
 
